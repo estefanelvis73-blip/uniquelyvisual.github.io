@@ -766,26 +766,22 @@
     2. Sustituye action="https://formspree.io/f/xnjljapw"
        por tu endpoint real
   -->
-  <form
-    class="formulario"
-    action="https://formspree.io/f/XXXXXXXX"
-    method="POST"
-  >
-    <div class="campo">
-      <label for="Name">Name</label>
-      <input type="text" id="nombre" name="nombre" placeholder="Your Name" required>
-    </div>
-    <div class="campo">
-      <label for="email">Email</label>
-      <input type="email" id="email" name="email" placeholder="your@email.com" required>
-    </div>
-    <div class="campo">
-      <label for="mensaje">Message</label>
-      <textarea id="mensaje" name="mensaje" placeholder="Tell me about your project..."></textarea>
-    </div>
-    <button type="submit" class="btn-enviar">Send message</button>
-  </form>
-</section>
+ 
+<form
+  action="https://formspree.io/f/xnjljapw"
+  method="POST"
+>
+  <label>
+    Your email:
+    <input type="email" name="email">
+  </label>
+  <label>
+    Your message:
+    <textarea name="message"></textarea>
+  </label>
+  <!-- your other form fields go here -->
+  <button type="submit">Send</button>
+</form>
 
 
 <!-- ══════════════════════════════════════════════════════════

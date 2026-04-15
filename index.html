@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- ═══════════════════════════════════════════════════════
+       TÍTULO DE LA PESTAÑA DEL NAVEGADOR — cámbialo aquí
+  ═══════════════════════════════════════════════════════ -->
+  <title>Uniquely Visual — Photography Portfolio</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Unbounded:wght@200;300&display=swap" rel="stylesheet">
+
+  <style>
+    /* ═══════════════════════════════════════════════════════
+       COLORES Y FUENTES GLOBALES
+       Cambia estos valores para personalizar todo el sitio
+    ═══════════════════════════════════════════════════════ */
+    :root {
+      --color-fondo:       #0c0b0a;   /* fondo principal (modo oscuro) */
+      --color-superficie:  #141210;   /* fondo de tarjetas y secciones */
+      --color-texto:       #f0ede8;   /* texto principal */
+      --color-texto-suave: #6b6762;   /* texto secundario / labels */
+      --color-acento:      #c4a35a;   /* color dorado de acento — cámbialo por tu color preferido */
+      --color-linea:       rgba(240, 237, 232, 0.1); /* líneas divisorias */
+
+      --fuente-titulo: 'Cormorant Garamond', Georgia, serif;
+      --fuente-ui:     'Unbounded', monospace;
+    }
+
+    /* ── RESET ── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--color-fondo);
+      color: var(--color-texto);
+      font-family: system-ui, sans-serif;
+      overflow-x: hidden;
+    }
+    img { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── NAVEGACIÓN ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 48px;
+      border-bottom: 0.5px solid var(--color-linea);
+      background: var(--color-fondo);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-family: var(--fuente-ui);
+      font-size: 10px;
+      font-weight: 200;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+    }
+    .nav-links {
+      display: flex;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--fuente-ui);
+      font-size: 8px;
+      font-weight: 200;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--color-texto-suave);
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--color-acento); }
+
+    /* ── HERO ── */
+    #hero {
+      min-height: 90vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 56px 48px;
+      overflow: hidden;
+    }
+    .hero-imagen {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      z-index: 0;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(12,11,10,0.93) 0%, rgba(12,11,10,0.2) 55%, transparent 100%);
+      z-index: 1;
+    }
+    .hero-contenido {
+      position: relative;
+      z-index: 2;
+    }
+    .hero-etiqueta {
+      font-family: var(--fuente-ui);
+      font-size: 9px;
+      font-weight: 200;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--color-acento);
+      margin-bottom: 16px;
+    }
+    .hero-titulo {
+      font-family: var(--fuente-titulo);
+      font-size: clamp(3.2rem, 9vw, 7rem);
+      font-weight: 300;
+      line-height: 0.92;
+    }
+    .hero-titulo em { font-style: italic; }
+    .hero-descripcion {
+      font-family: var(--fuente-ui);
+      font-size: 9px;
+      font-weight: 200;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--color-texto-suave);
+      margin-top: 24px;
+      line-height: 2;
+      max-width: 400px;
+    }
+    .hero-linea {
+      width: 44px;
+      height: 0.5px;
+      background: var(--color-acento);
+      margin-top: 28px;
+    }
+
+    /* ── ETIQUETA DE SECCIÓN (reutilizable) ── */
+    .sec-etiqueta {
+      font-family: var(--fuente-ui);
+      font-size: 8px;
+      font-weight: 200;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--color-acento);
+      margin-bottom: 10px;
+    }
+    .sec-titulo {
+      font-family: var(--fuente-titulo);
+      font-size: clamp(2rem, 4.5vw, 3.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      margin-bottom: 48px;
+    }
+    .sec-titulo em { font-style: italic; }
+
+    /* ═══════════════════════════════════════════════════════
+       SECCIONES DE GALERÍA
+       Cada bloque .seccion representa una categoría
+       (Portraits, Automotive, Street, etc.)
+    ═══════════════════════════════════════════════════════ */
+    #trabajo {
+      padding: 80px 48px;
+    }
+
+    .seccion {
+      margin-bottom: 80px;
+    }
+    .seccion-cabecera {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 0.5px solid var(--color-linea);
+    }
+    .seccion-nombre {
+      font-family: var(--fuente-titulo);
+      font-size: clamp(1.6rem, 3vw, 2.6rem);
+      font-weight: 300;
+      font-style: italic;
+    }
+    .seccion-subtitulo {
+      font-family: var(--fuente-ui);
+      font-size: 8px;
+      font-weight: 200;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--color-texto-suave);
+    }
+
+    /* ── GRID DE FOTOS ── */
+    .galeria {
+      display: grid;
+      /* 
+        Cambia el número de columnas aquí.
+        minmax(220px, 1fr) = columnas de mínimo 220px, máximo relleno.
+        Más columnas = minmax más pequeño. Menos = más grande.
+      */
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 3px;
+    }
+    .foto {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 3 / 4;   /* cambia a 1/1 para cuadradas, 16/9 para panorámicas */
+      background: var(--color-superficie);
+      cursor: pointer;
+    }
+    .foto img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .foto:hover img { transform: scale(1.07); }
+    .foto-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(12, 11, 10, 0);
+      transition: background 0.4s;
+      display: flex;
+      align-items: flex-end;
+      padding: 20px 16px;
+    }
+    .foto:hover .foto-overlay { background: rgba(12, 11, 10, 0.45); }
+    .foto-caption {
+      font-family: var(--fuente-ui);
+      font-size: 8px;
+      font-weight: 200;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(240, 237, 232, 0.9);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    .foto:hover .foto-caption { opacity: 1; transform: none; }
+
+    /* ── LIGHTBOX ── */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 7, 7, 0.97);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+    }
+    #lightbox.abierto { display: flex; }
+    #lb-img {
+      max-width: 90vw;
+      max-height: 88vh;
+      object-fit: contain;
+    }
+    .lb-cerrar {
+      position: fixed;
+      top: 22px;
+      right: 28px;
+      background: none;
+      border: none;
+      color: rgba(240, 237, 232, 0.5);
+      font-size: 22px;
+      cursor: pointer;
+      transition: color 0.3s;
+      font-family: var(--fuente-ui);
+    }
+    .lb-cerrar:hover { color: var(--color-acento); }
+    .lb-nav {
+      position: fixed;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: 0.5px solid rgba(240, 237, 232, 0.2);
+      color: rgba(240, 237, 232, 0.5);
+      font-family: var(--fuente-ui);
+      font-size: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .lb-nav:hover { border-color: var(--color-acento); color: var(--color-acento); }
+    #lb-prev { left: 20px; }
+    #lb-next { right: 20px; }
+    .lb-contador {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--fuente-ui);
+      font-size: 8px;
+      font-weight: 200;
+      letter-spacing: 0.3em;
+      color: rgba(240, 237, 232, 0.4);
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      padding: 80px 48px;
+      border-top: 0.5px solid var(--color-linea);
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 72px;
+      align-items: center;
+    }
+    .about-imagen {
+      aspect-ratio: 4 / 5;
+      overflow: hidden;
+      background: var(--color-superficie);
+    }
+    .about-imagen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+    }
+    .about-nombre {
+      font-family: var(--fuente-titulo);
+      font-size: clamp(1.8rem, 3.5vw, 3rem);
+      font-weight: 300;
+      line-height: 1.05;
+      margin-bottom: 20px;
+    }
+    .about-nombre em { font-style: italic; }
+    .about-bio {
+      color: var(--color-texto-suave);
+      font-size: 15px;
+      line-height: 1.85;
+      margin-bottom: 14px;
+      max-width: 480px;
+    }
+    .about-stats {
+      display: flex;
+      gap: 36px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+    .stat {
+      border-top: 0.5px solid var(--color-linea);
+      padding-top: 14px;
+      min-width: 64px;
+    }
+    .stat-numero {
+      font-family: var(--fuente-titulo);
+      font-size: 2.2rem;
+      font-weight: 300;
+      font-style: italic;
+      color: var(--color-acento);
+    }
+    .stat-label {
+      font-family: var(--fuente-ui);
+      font-size: 8px;
+      font-weight: 200;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--color-texto-suave);
+      margin-top: 4px;
+    }
+
+    /* ── CONTACT ── */
+    #contact {
+      padding: 80px 48px;
+      border-top: 0.5px solid var(--color-linea);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+    }
+    .contact-titulo {
+      font-family: var(--fuente-titulo);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 300;
+      line-height: 1.05;
+      margin-bottom: 16px;
+    }
+    .contact-titulo em { font-style: italic; }
+    .contact-desc {
+      color: var(--color-texto-suave);
+      font-size: 15px;
+      line-height: 1.85;
+      max-width: 380px;
+    }
+    .redes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 28px;
+    }
+    .red {
+      font-family: var(--fuente-ui);
+      font-size: 8px;
+      font-weight: 200;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: 0.5px solid var(--color-linea);
+      padding: 9px 16px;
+      color: var(--color-texto-suave);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+    .red:hover { border-color: var(--color-acento); color: var(--color-acento); }
+    .formulario {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .campo label {
+      display: block;
+      font-family: var(--fuente-ui);
+      font-size: 8px;
+      font-weight: 200;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--color-texto-suave);
+      margin-bottom: 6px;
+    }
+    .campo input,
+    .campo textarea {
+      width: 100%;
+      background: var(--color-superficie);
+      border: 0.5px solid var(--color-linea);
+      padding: 12px 16px;
+      color: var(--color-texto);
+      font-size: 14px;
+      font-family: system-ui, sans-serif;
+      outline: none;
+      border-radius: 2px;
+      transition: border-color 0.3s;
+    }
+    .campo textarea { min-height: 100px; resize: vertical; }
+    .campo input:focus,
+    .campo textarea:focus { border-color: var(--color-acento); }
+    .btn-enviar {
+      align-self: flex-start;
+      background: var(--color-acento);
+      border: none;
+      padding: 14px 32px;
+      font-family: var(--fuente-ui);
+      font-size: 8px;
+      font-weight: 300;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: #0c0b0a;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: opacity 0.3s;
+    }
+    .btn-enviar:hover { opacity: 0.8; }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 26px 48px;
+      border-top: 0.5px solid var(--color-linea);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .footer-texto {
+      font-family: var(--fuente-ui);
+      font-size: 8px;
+      font-weight: 200;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--color-texto-suave);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      nav, #hero, #trabajo, #about, #contact, footer {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+      #about, #contact { grid-template-columns: 1fr; }
+      .nav-links { gap: 18px; }
+      .galeria { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     LIGHTBOX (no tocar — funciona automáticamente)
+══════════════════════════════════════════════════════════ -->
+<div id="lightbox">
+  <button class="lb-cerrar" onclick="cerrarLb()">✕</button>
+  <button class="lb-nav" id="lb-prev" onclick="lbNav(-1)">&#8592;</button>
+  <img id="lb-img" src="" alt="">
+  <button class="lb-nav" id="lb-next" onclick="lbNav(1)">&#8594;</button>
+  <div class="lb-contador" id="lb-contador"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     NAVEGACIÓN
+     → Cambia el logo y los textos del menú
+══════════════════════════════════════════════════════════ -->
+<nav>
+  <div class="nav-logo">Uniquely Visual</div><!-- ← tu nombre o marca -->
+  <ul class="nav-links">
+    <li><a href="#trabajo">Work</a></li>      <!-- ← puedes cambiar el texto -->
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     HERO — IMAGEN PRINCIPAL
+     → Reemplaza "images/hero.jpg" por tu imagen
+     → La imagen debe estar en la carpeta images/
+     → Cambia también el título y la descripción
+══════════════════════════════════════════════════════════ -->
+<section id="hero">
+  <img
+    class="hero-imagen"
+    src="portada/retrato/botez2.jpg"
+    alt="Hero — Uniquely Visual"
+  >
+  <div class="hero-overlay"></div>
+  <div class="hero-contenido">
+    <p class="hero-etiqueta">Photography &amp; Visual Storytelling</p><!-- ← etiqueta pequeña -->
+    <h1 class="hero-titulo">
+      <em>Light</em><br>
+      finds a way.
+    </h1>
+    <p class="hero-descripcion">
+      Based in Frankfurt — Available  for <br>
+      Portraits · Automotive · Editorial · Street
+    </p>
+    <div class="hero-linea"></div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     TRABAJO / GALERÍAS
+     ┌─────────────────────────────────────────────────────┐
+     │  Cómo añadir imágenes a una sección:               │
+     │  1. Copia el bloque <div class="foto"> completo    │
+     │  2. Cambia el src="images/..." por tu imagen       │
+     │  3. Cambia el texto de data-caption (opcional)     │
+     │                                                     │
+     │  Cómo añadir una sección nueva:                    │
+     │  1. Copia todo el bloque <div class="seccion">     │
+     │  2. Cambia el nombre, subtítulo y fotos            │
+     └─────────────────────────────────────────────────────┘
+══════════════════════════════════════════════════════════ -->
+<section id="trabajo">
+  <p class="sec-etiqueta">Selected work</p>
+  <h2 class="sec-titulo"><em>Portfolio</em></h2>
+
+
+  <!-- ─── SECCIÓN 1: PORTRAITS ─── -->
+  <div class="seccion">
+    <div class="seccion-cabecera">
+      <h3 class="seccion-nombre">Portraits</h3><!-- ← nombre de la categoría -->
+      <span class="seccion-subtitulo">Editorial · Studio</span><!-- ← subtítulo -->
+    </div>
+    <div class="galeria" id="galeria-portraits">
+
+      <!-- FOTO 1 — cambia src por tu imagen -->
+      <div class="foto" onclick="abrirLb('galeria-portraits', 0)">
+        <img src="portada/retrato/port 1.jpg" alt="Portrait 01" loading="lazy">
+        <div class="foto-overlay">
+          <span class="foto-caption" data-caption="">Portrait 01</span><!-- ← caption opcional -->
+        </div>
+      </div>
+
+      <!-- FOTO 2 -->
+      <div class="foto" onclick="abrirLb('galeria-portraits', 1)">
+        <img src="portada/retrato/SE0A2027.jpg" alt="Portrait 02" loading="lazy">
+        <div class="foto-overlay">
+          <span class="foto-caption">Portrait 02</span>
+        </div>
+      </div>
+
+      <!-- FOTO 3 -->
+      <div class="foto" onclick="abrirLb('galeria-portraits', 2)">
+        <img src="portada/retrato/IMG_0002.JPG" alt="Portrait 03" loading="lazy">
+        <div class="foto-overlay">
+          <span class="foto-caption">Portrait 03</span>
+        </div>
+      </div>
+
+      <!-- FOTO 4 -->
+      <div class="foto" onclick="abrirLb('galeria-portraits', 3)">
+        <img src="portada/retrato/SE0A3915.JPG" alt="Portrait 04" loading="lazy">
+        <div class="foto-overlay">
+          <span class="foto-caption">Portrait 04</span>
+        </div>
+      </div>
+
+      <!-- ↑ Copia cualquier bloque .foto para añadir más fotos a esta sección -->
+
+    </div>
+  </div><!-- fin sección Portraits -->
+
+
+  
+
+
+  <!-- ─── SECCIÓN 3: STREET ─── -->
+  <div class="seccion">
+    <div class="seccion-cabecera">
+      <h3 class="seccion-nombre">Street</h3>
+      <span class="seccion-subtitulo">Documentary · Urban</span>
+    </div>
+    <div class="galeria" id="galeria-street">
+
+      <div class="foto" onclick="abrirLb('galeria-street', 0)">
+        <img src="portada/street/street 1.jpg" alt="Street 01" loading="lazy">
+        <div class="foto-overlay"><span class="foto-caption">Street 01</span></div>
+      </div>
+
+      <div class="foto" onclick="abrirLb('galeria-street', 1)">
+        <img src="portada/street/SE0A9986.jpg" alt="Street 02" loading="lazy">
+        <div class="foto-overlay"><span class="foto-caption">Street 02</span></div>
+      </div>
+
+      <div class="foto" onclick="abrirLb('galeria-street', 2)">
+        <img src="portada/street/SE0A0681.jpg" alt="Street 03" loading="lazy">
+        <div class="foto-overlay"><span class="foto-caption">Street 03</span></div>
+      </div>
+
+      <div class="foto" onclick="abrirLb('galeria-street', 3)">
+        <img src="portada/street/SE0A0007.jpg" alt="Street 04" loading="lazy">
+        <div class="foto-overlay"><span class="foto-caption">Street 04</span></div>
+      </div>
+
+    </div>
+  </div><!-- fin sección Street -->
+
+
+  <!-- ─── SECCIÓN 4: CLIENT WORK ─── -->
+  <div class="seccion">
+    <div class="seccion-cabecera">
+      <h3 class="seccion-nombre">Extra</h3>
+      <span class="seccion-subtitulo">Brand · Campaign</span>
+    </div>
+    <div class="galeria" id="galeria-clients">
+
+      <div class="foto" onclick="abrirLb('galeria-clients', 0)">
+        <img src="portada/street/bad hmb.jpg" alt="Client 01" loading="lazy">
+        <div class="foto-overlay"><span class="foto-caption">Extra 1</span></div>
+      </div>
+
+      <div class="foto" onclick="abrirLb('galeria-clients', 1)">
+        <img src="portada/street/ffm 1 .jpg" alt="Client 02" loading="lazy">
+        <div class="foto-overlay"><span class="foto-caption">Extra 2</span></div>
+      </div>
+
+      <div class="foto" onclick="abrirLb('galeria-clients', 2)">
+        <img src="portada/street/ffm 2 .jpg" alt="Client 03" loading="lazy">
+        <div class="foto-overlay"><span class="foto-caption">Extra 3</span></div>
+      </div>
+
+      <div class="foto" onclick="abrirLb('galeria-clients', 3)">
+        <img src="portada/street/ffm3 .jpg" alt="Client 04" loading="lazy">
+        <div class="foto-overlay"><span class="foto-caption">Extra 4</span></div>
+      </div>
+
+    </div>
+  </div><!-- fin sección Client work -->
+
+
+  <!-- ══════════════════════════════════════════════════════
+       ¿Quieres añadir otra sección? Copia el bloque
+       de abajo, pégalo aquí y personalízalo:
+
+  <div class="seccion">
+    <div class="seccion-cabecera">
+      <h3 class="seccion-nombre">Nombre de sección</h3>
+      <span class="seccion-subtitulo">Tipo · Subtítulo</span>
+    </div>
+    <div class="galeria" id="galeria-nueva">
+      <div class="foto" onclick="abrirLb('galeria-nueva', 0)">
+        <img src="images/nueva/01.jpg" alt="" loading="lazy">
+        <div class="foto-overlay"><span class="foto-caption">Título</span></div>
+      </div>
+    </div>
+  </div>
+  ══════════════════════════════════════════════════════ -->
+
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     ABOUT
+     → Cambia la imagen, nombre, bio y estadísticas
+══════════════════════════════════════════════════════════ -->
+<section id="about">
+  <div class="about-imagen">
+    <img src="portada/retrato/stefan 1.JPG" alt="Fotógrafo — Uniquely Visual"><!-- ← tu foto -->
+  </div>
+  <div>
+    <p class="sec-etiqueta">About</p>
+    <h2 class="about-nombre">
+      <em>Visual</em> storyteller <!-- ← tu nombre o tagline -->
+    </h2>
+    <p class="about-bio">
+      I'm a photographer based in Frankfurt, specialising in portraiture,
+      street style, and editorial work. My approach is cinematic — I look
+      for the moment where light and emotion collide.
+    </p><!-- ← bio párrafo 1 -->
+    <p class="about-bio">
+      Available for commercial campaigns, editorial shoots,
+      and personal projects reels for social media.
+    </p><!-- ← bio párrafo 2 (puedes borrar o añadir más) -->
+
+    <!-- Estadísticas — cambia los números y etiquetas -->
+    <div class="about-stats">
+      <div class="stat">
+        <div class="stat-numero">4+</div>
+        <div class="stat-label">Years exp.</div>
+      </div>
+      <div class="stat">
+        <div class="stat-numero">70+</div>
+        <div class="stat-label">Projects</div>
+      </div>
+      <div class="stat">
+        <div class="stat-numero">30+</div>
+        <div class="stat-label">Clients</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     CONTACT
+     → Cambia descripción, enlaces de redes sociales
+     → El formulario necesita un backend o servicio externo
+       (Formspree, Netlify Forms, etc.) para funcionar en línea
+══════════════════════════════════════════════════════════ -->
+<section id="contact">
+  <div>
+    <p class="sec-etiqueta">Contact</p>
+    <h2 class="contact-titulo">
+      <em>Let's</em> create.<!-- ← título de contacto -->
+    </h2>
+    <p class="contact-desc">
+      Open for commissions, collaborations,
+      and conversations about light.<!-- ← descripción -->
+    </p>
+
+    <!-- Redes sociales — cambia href="#" por tu URL real -->
+    <div class="redes">
+      <a class="red" href="https://instagram.com/uniquelyvisual" target="_blank" rel="noopener">Instagram</a>
+      
+      
+      <a class="red" href="mailto:estefanelvis73@gmail.com">Email</a><!-- ← tu email -->
+    </div>
+  </div>
+
+  <!--
+    FORMULARIO — para que funcione en línea usa Formspree:
+    1. Crea cuenta gratis en formspree.io
+    2. Sustituye action="https://formspree.io/f/XXXXXXXX"
+       por tu endpoint real
+  -->
+  <form
+    class="formulario"
+    action="https://formspree.io/f/XXXXXXXX"
+    method="POST"
+  >
+    <div class="campo">
+      <label for="Name">Name</label>
+      <input type="text" id="nombre" name="nombre" placeholder="Your Name" required>
+    </div>
+    <div class="campo">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="your@email.com" required>
+    </div>
+    <div class="campo">
+      <label for="mensaje">Message</label>
+      <textarea id="mensaje" name="mensaje" placeholder="Tell me about your project..."></textarea>
+    </div>
+    <button type="submit" class="btn-enviar">Send message</button>
+  </form>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     FOOTER — cambia el texto y el año
+══════════════════════════════════════════════════════════ -->
+<footer>
+  <span class="footer-texto">© 2020 Uniquely Visual. All rights reserved.</span>
+  <span class="footer-texto">Frankfurt, Germany</span><!-- ← tu ciudad -->
+</footer>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     JAVASCRIPT — no es necesario modificarlo
+══════════════════════════════════════════════════════════ -->
+<script>
+  /* ── LIGHTBOX ── */
+  let lbGaleriaActual = [];
+  let lbIndice = 0;
+
+  function abrirLb(galeriaId, indice) {
+    const galeria = document.getElementById(galeriaId);
+    const imagenes = galeria.querySelectorAll('.foto img');
+    lbGaleriaActual = Array.from(imagenes).map(img => ({ src: img.src, alt: img.alt }));
+    lbIndice = indice;
+    mostrarLbImagen();
+    document.getElementById('lightbox').classList.add('abierto');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function mostrarLbImagen() {
+    const img = document.getElementById('lb-img');
+    img.src = lbGaleriaActual[lbIndice].src;
+    img.alt = lbGaleriaActual[lbIndice].alt;
+    document.getElementById('lb-contador').textContent =
+      (lbIndice + 1) + ' / ' + lbGaleriaActual.length;
+  }
+
+  function lbNav(direccion) {
+    lbIndice = (lbIndice + direccion + lbGaleriaActual.length) % lbGaleriaActual.length;
+    mostrarLbImagen();
+  }
+
+  function cerrarLb() {
+    document.getElementById('lightbox').classList.remove('abierto');
+    document.body.style.overflow = '';
+  }
+
+  document.addEventListener('keydown', e => {
+    if (!document.getElementById('lightbox').classList.contains('abierto')) return;
+    if (e.key === 'Escape')      cerrarLb();
+    if (e.key === 'ArrowLeft')   lbNav(-1);
+    if (e.key === 'ArrowRight')  lbNav(1);
+  });
+</script>
+
+</body>
+</html>
